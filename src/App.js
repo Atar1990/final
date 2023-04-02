@@ -9,8 +9,20 @@ function App() {
   return (
     <div className="App">
       <div className="App-content">
-        {page === 'login' && <Login signupClicked={() => { setPage('signup') }} />}
-        {page === 'signup' && <Signup />}
+
+        {page === 'login' && <Login
+          signupClicked={() => {
+            setPage('signup')
+          }}
+          finishLogin={() => {
+            setPage('home')
+          }} />}
+
+        {page === 'signup' && <Signup
+          finishSignUp={() => {
+            setPage('questions')
+          }} />}
+
       </div>
     </div>
   );

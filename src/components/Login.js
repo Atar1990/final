@@ -9,12 +9,18 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { validateEmail } from '../utils/helpers'
 import { Button, Link } from '@mui/material';
+import { Snackbar } from './Snackbar';
 
 function Login(props) {
     const [showPassword, setShowPassword] = useState(false);
     const [loginFields, setLoginFields] = useState({
         password: '',
         email: ''
+    })
+    const [snackbar, setSnackbar] = useState({
+        severity: 'success',
+        open: false,
+        message: ''
     })
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -57,9 +63,29 @@ function Login(props) {
                         label="Password"
                     />
                 </FormControl>
-                <Button onClick={() => { console.log(loginFields); }} variant="contained">Login</Button>
+                <Button onClick={async () => {
+                    //send loginFields to server and validate that user exist
+
+                    // const {user} = await loginUser(loginFields);
+
+                    // if user exist - login
+                    // setSnackbar({
+                    //     severity: 'success',
+                    //     message: "WOWWWW",
+                    //     open: true
+                    // })
+                    // props.finishLogin()
+
+                    // else show error message and do nothing
+                    // setSnackbar({
+                    //     severity: 'error',
+                    //     message: "טעות אח שלי",
+                    //     open: true
+                    // })
+                }} variant="contained">Login</Button>
             </div>
             <Link onClick={() => { props.signupClicked() }}>Signup</Link>
+            <Snackbar snackbar={snackbar}></Snackbar>
         </>
     );
 }
