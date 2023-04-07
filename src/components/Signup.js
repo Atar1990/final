@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -13,6 +13,7 @@ import { Snackbar } from './Snackbar'
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { getEnv } from '../utils/env';
 
 function Signup(props) {
     const [showPassword1, setShowPassword1] = useState(false);
@@ -41,6 +42,23 @@ function Signup(props) {
         const { email, first_name, last_name, tos, password1, password2 } = loginFields;
         const isValid = email && first_name && last_name && tos && password1 === password2;
         return isValid;
+    }
+
+    const fetchData = async () => {
+        const response = await fetch(`${getEnv()}/api/signup`, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                UserEmail: loginFields.email
+            })
+        })
+        if (!response.ok) {
+            throw new Error('Data could not be fetched!')
+        } else {
+            return response.text()
+        }
     }
 
 
@@ -123,8 +141,11 @@ function Signup(props) {
             <FormGroup>
                 <FormControlLabel style={{ color: "#333" }} control={<Checkbox onChange={(ev) => { setLoginFields({ ...loginFields, tos: ev.target.checked }) }} />} label="Label" />
             </FormGroup>
-            <Button disabled={!formValidated()} onClick={() => {
+            <Button disabled={!formValidated()} onClick={async () => {
                 console.log(loginFields);
+
+                const res = await fetchData();
+                console.log(res);
                 //send loginFields to server and create new user
 
                 // const {user} = await signup(loginFields);
