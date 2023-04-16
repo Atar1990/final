@@ -13,7 +13,7 @@ import { Snackbar } from './Snackbar'
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { getEnv } from '../utils/env';
+import { signup } from '../utils/api';
 
 function Signup(props) {
     const [showPassword1, setShowPassword1] = useState(false);
@@ -42,23 +42,6 @@ function Signup(props) {
         const { email, first_name, last_name, tos, password1, password2 } = loginFields;
         const isValid = email && first_name && last_name && tos && password1 === password2;
         return isValid;
-    }
-
-    const fetchData = async () => {
-        const response = await fetch(`${getEnv()}/api/signup`, {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                UserEmail: loginFields.email
-            })
-        })
-        if (!response.ok) {
-            throw new Error('Data could not be fetched!')
-        } else {
-            return response.text()
-        }
     }
 
 
@@ -142,29 +125,23 @@ function Signup(props) {
                 <FormControlLabel style={{ color: "#333" }} control={<Checkbox onChange={(ev) => { setLoginFields({ ...loginFields, tos: ev.target.checked }) }} />} label="Label" />
             </FormGroup>
             <Button disabled={!formValidated()} onClick={async () => {
-                console.log(loginFields);
-
-                const res = await fetchData();
-                console.log(res);
-                //send loginFields to server and create new user
-
-                // const {user} = await signup(loginFields);
-
-                // if user created - login
-                // setSnackbar({
-                //     severity: 'success',
-                //     message: "WOWWWW",
-                //     open: true
-                // })
-                // props.finishSignUp()
-
-                // else show error message and do nothing
-                // setSnackbar({
-                //     severity: 'error',
-                //     message: "טעות אח שלי",
-                //     open: true
-                // })
-
+                const msg = await signup(loginFields);
+                if (!msg.includes('exist')) {
+                    // if user created - login
+                    setSnackbar({
+                        severity: 'success',
+                        message: "WOWWWW",
+                        open: true
+                    })
+                    props.finishSignUp()
+                } else {
+                    // else show error message and do nothing
+                    setSnackbar({
+                        severity: 'error',
+                        message: "טעות אח שלי",
+                        open: true
+                    })
+                }
 
             }} variant="contained">Signup</Button>
             <Snackbar snackbar={snackbar}></Snackbar>

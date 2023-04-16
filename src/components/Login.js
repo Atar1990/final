@@ -10,6 +10,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { validateEmail } from '../utils/helpers'
 import { Button, Link } from '@mui/material';
 import { Snackbar } from './Snackbar';
+import { login } from '../utils/api'
 
 function Login(props) {
     const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +32,7 @@ function Login(props) {
     return (
         <>
             <div className="App-login">
-                <img className="App-logo" src="logo.png" />
+                <img className="App-logo" src="logo.png" alt="sad" />
                 <FormControl sx={{ m: 1, width: 'calc(100% - 16px)' }} variant="outlined">
                     <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
                     <OutlinedInput
@@ -66,23 +67,34 @@ function Login(props) {
                 <Button onClick={async () => {
                     //send loginFields to server and validate that user exist
 
-                    // const {user} = await loginUser(loginFields);
+                    const res = await login(loginFields);
+                    const user = JSON.parse(res);
 
-                    // if user exist - login
-                    // setSnackbar({
-                    //     severity: 'success',
-                    //     message: "WOWWWW",
-                    //     open: true
-                    // })
-                    // props.finishLogin()
+                    if (user) {
+                        console.log({ user })
 
-                    // else show error message and do nothing
-                    // setSnackbar({
-                    //     severity: 'error',
-                    //     message: "טעות אח שלי",
-                    //     open: true
-                    // })
-                }} variant="contained">Login</Button>
+                        // if user exist - login
+                        setSnackbar({
+                            severity: 'success',
+                            message: "WOWWWW",
+                            open: true
+                        })
+                        props.finishLogin()
+                    }
+                    else {
+                        console.log("users wasnt found!")
+
+                        // else show error message and do nothing
+                        setSnackbar({
+                            severity: 'error',
+                            message: "טעות אח שלי",
+                            open: true
+                        })
+                    }
+
+
+                }
+                } variant="contained">Login</Button>
             </div>
             <Link onClick={() => { props.signupClicked() }}>Signup</Link>
             <Snackbar snackbar={snackbar}></Snackbar>
