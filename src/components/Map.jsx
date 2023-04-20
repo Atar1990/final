@@ -100,7 +100,6 @@ function Map(props) {
             <CountrySelect onChange={countryChanged} />
 
             <br />
-
             <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={center}
