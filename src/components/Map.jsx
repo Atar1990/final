@@ -3,6 +3,7 @@ import { GoogleMap, useJsApiLoader, Marker, MarkerClusterer } from '@react-googl
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import CountrySelect from './SelectComp';
+import { mapCountry } from '../utils/api';
 
 
 const containerStyle = {
@@ -12,7 +13,10 @@ const containerStyle = {
 
 };
 
-const center = { lat: -37.765015, lng: 145.133858 }
+// const center = {
+//     lat: -37.765015,
+//     lng: 145.133858
+// }
 
 const locations = [
     { lat: -31.56391, lng: 147.154312 },
@@ -51,9 +55,30 @@ function createKey(location) {
 function Map(props) {
     const [map, setMap] = React.useState(null);
     const [mapFields, setMapFields] = useState({
-        countryName: '',
+        countryName: 'הודו',
         countryMainLand: '',
+        CountryLat: '',
+        CountryLon: ''
     });
+
+    const [Atar, setAtar] = useState(
+        {
+            CountryLat: 0,
+            CountryLon: 0,
+            // countryMainLand: '',
+            // countryName: ''
+        }
+    )
+
+    const [center, setCenter] = useState({
+        lat: -37.765015,
+        lng: 145.133858
+    })
+
+    const [userLocation, setUserLocation] = useState({
+        userLat: 0,
+        userLng: 0
+    })
 
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
@@ -61,7 +86,7 @@ function Map(props) {
     })
 
     const onLoad = React.useCallback(function callback(map_) {
-        setMap(map_)
+        setMap(map_);
     }, []);
 
     const onUnmount = React.useCallback(function callback(map) {
@@ -70,9 +95,60 @@ function Map(props) {
 
     const countryChanged = (countryName) => {
         console.log(countryName);
-        setMapFields({
-            countryName
+        setMapFields({//מגדיר את שם הארץ לפי הבחירה בסלקט
+            countryName: countryName
         })
+
+        // const mapCountry = async (mapFields.countryName) => {
+        debugger;
+        const apiURL = 'https://localhost:44303/api/map/';
+        fetch(apiURL + mapFields.countryName, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Accept': 'application/json; charset=UTF-8'
+            })
+            // body: JSON.stringify({
+            //     country: value
+            // })
+        })
+            .then(response => {
+                console.log('response= ', response);
+                console.log('response statuse=', response.status);
+                console.log('response.ok=', response.ok)
+
+                return response.json()
+            })
+
+            .then(
+                (result) => {
+                    console.log("fetch get user by id=", result);
+                    console.log(result[0]);
+                    setAtar(result[0])
+                },
+                (error) => {
+                    console.log("err post=", error);
+                });
+        console.log(Atar);
+        setCenter({
+            lat: Atar.CountryLat,
+            lng: Atar.CountryLon
+        })
+
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                setUserLocation({
+                    userLat: position.coords.latitude,
+                    userLng: position.coords.longitude
+                })
+                console.log(userLocation);
+                setCenter({
+                    lat: userLocation.userLat,
+                    lng: userLocation.userLng
+                })
+            }
+        )
+
     }
 
     return isLoaded ? (
@@ -100,10 +176,11 @@ function Map(props) {
             <CountrySelect onChange={countryChanged} />
 
             <br />
+
             <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={center}
-                zoom={6}
+                zoom={5}
                 onLoad={onLoad}
                 onUnmount={onUnmount}
             >

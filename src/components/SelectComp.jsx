@@ -37,15 +37,15 @@ export default CountrySelect;
 
 const countries = [
     {
-        label: 'Andorra',
+        label: 'הודו',
     },
     {
-        label: 'United Arab Emirates',
+        label: 'אווקודור',
     },
     {
-        label: 'Afghanistan',
+        label: 'ברזיל',
     },
     {
-        label: 'Antigua and Barbuda',
+        label: 'מקסיקו',
     }
 ]
