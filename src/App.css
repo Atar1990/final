@@ -32,4 +32,13 @@
 .App-logo {
   width: 100%;
   max-width: 600px;
+  margin-top: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.User-Photo{
+  margin-top: -100px;
+  margin-left: auto;
+  margin-right: auto;
 }
