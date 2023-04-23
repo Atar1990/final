@@ -180,7 +180,7 @@ function Map(props) {
             <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={center}
-                zoom={5}
+                zoom={8}
                 onLoad={onLoad}
                 onUnmount={onUnmount}
             >
